@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Pricing Model">
+<meta name="theme-color" content="#1a1d24">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%23000'/%3E%3Ctext x='90' y='115' font-family='Arial' font-size='80' font-weight='bold' fill='%2300AEEF' text-anchor='middle'%3EL%3C/text%3E%3C/svg%3E">
+<title>West Series · Pricing Model V2.1</title>
+<style>
+  :root {
+    --jet:#363636;
+    --text:#3a3f48;          /* dark gray for body text (replaces black) */
+    --text-strong:#22262d;   /* slightly darker for headlines */
+    --silver:#8a8f99;
+    --silver-light:#c8ccd4;
+    --blue:#00AEEF;
+    --blue-dark:#0096cf;
+    --green:#5fa033;
+    --red:#e01a3a;
+    --field-bg:rgba(244,245,248,.65);  /* light gray entry fields */
+    --field-border:rgba(180,185,195,.45);
+    --glass-bg:rgba(255,255,255,.55);
+    --glass-border:rgba(255,255,255,.7);
+    --glass-shadow:0 8px 32px rgba(31,38,55,.08);
+    --header-bg:rgba(26,29,36,.78);
+  }
+
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body {
+    margin:0; padding:0;
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Helvetica,Arial,sans-serif;
+    color:var(--text);
+    font-size:15px; line-height:1.4;
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 0% 0%, rgba(0,174,239,.25), transparent 45%),
+      radial-gradient(circle at 100% 0%, rgba(130,46,191,.18), transparent 50%),
+      radial-gradient(circle at 50% 100%, rgba(126,177,66,.18), transparent 55%),
+      linear-gradient(135deg, #e8ecf3 0%, #f4f6fa 100%);
+    background-attachment:fixed;
+  }
+
+  header {
+    background:var(--header-bg);
+    -webkit-backdrop-filter:blur(20px) saturate(180%);
+    backdrop-filter:blur(20px) saturate(180%);
+    color:#fff;
+    padding:max(env(safe-area-inset-top),12px) 16px 12px;
+    position:sticky; top:0; z-index:10;
+    border-bottom:1px solid rgba(255,255,255,.08);
+    box-shadow:0 2px 16px rgba(0,0,0,.12);
+  }
+  header h1 { margin:0; font-size:17px; font-weight:600; letter-spacing:.3px; }
+  header .subtitle { color:var(--blue); font-size:11px; margin-top:2px; font-weight:500; letter-spacing:.5px; }
+
+  main {
+    padding:12px;
+    padding-bottom:max(env(safe-area-inset-bottom),20px);
+    max-width:720px; margin:0 auto;
+  }
+
+  section {
+    background:var(--glass-bg);
+    -webkit-backdrop-filter:blur(20px) saturate(180%);
+    backdrop-filter:blur(20px) saturate(180%);
+    border:1px solid var(--glass-border);
+    border-radius:14px;
+    margin-bottom:12px;
+    box-shadow:var(--glass-shadow);
+    overflow:hidden;
+  }
+  section > h2 {
+    margin:0; padding:10px 14px;
+    font-size:12px; font-weight:700; letter-spacing:.9px; text-transform:uppercase;
+    color:var(--text-strong);
+    background:rgba(255,255,255,.35);
+    border-bottom:1px solid rgba(255,255,255,.4);
+    display:flex; align-items:center; justify-content:space-between;
+    cursor:pointer; user-select:none;
+  }
+  section > h2::after { content:"−"; font-size:16px; font-weight:400; color:var(--blue); }
+  section.collapsed > h2::after { content:"+"; }
+  section.collapsed > .body { display:none; }
+  .body { padding:10px 14px 12px; }
+
+  /* Inputs */
+  .row { display:flex; flex-direction:column; margin-bottom:8px; }
+  .row:last-child { margin-bottom:2px; }
+  .row label {
+    font-size:11px; font-weight:600; color:var(--text); margin-bottom:3px;
+    text-transform:uppercase; letter-spacing:.4px;
+  }
+  .row .hint {
+    font-size:10px; color:var(--silver); font-weight:400;
+    text-transform:none; letter-spacing:0; margin-left:5px;
+  }
+  input[type=number], input[type=text], select {
+    width:100%; padding:8px 11px;
+    font-size:15px; color:var(--text-strong);
+    border:1px solid var(--field-border); border-radius:8px;
+    background:var(--field-bg);
+    -webkit-appearance:none; appearance:none;
+    transition:border-color .15s, box-shadow .15s, background .15s;
+  }
+  select {
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path fill='%238a8f99' d='M6 8 0 0h12z'/></svg>");
+    background-repeat:no-repeat; background-position:right 11px center;
+    background-size:9px; padding-right:32px;
+  }
+  input:focus, select:focus {
+    outline:none; border-color:var(--blue);
+    background:rgba(255,255,255,.85);
+    box-shadow:0 0 0 3px rgba(0,174,239,.18);
+  }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:8px 10px; }
+  @media (max-width:480px) { .grid2 { grid-template-columns:1fr; gap:6px; } }
+
+  /* Output rows */
+  .output-row {
+    display:flex; justify-content:space-between; align-items:baseline;
+    padding:6px 0; border-bottom:1px solid rgba(180,185,195,.25);
+  }
+  .output-row:last-child { border-bottom:none; }
+  .output-row .lbl { font-size:13px; color:var(--text); }
+  .output-row .val {
+    font-size:15px; font-weight:600; color:var(--text-strong);
+    font-variant-numeric:tabular-nums;
+  }
+  .output-row.headline { padding:10px 0; }
+  .output-row.headline .lbl { font-weight:600; color:var(--text-strong); }
+  .output-row.headline .val { font-size:19px; color:var(--blue-dark); }
+
+  /* Recommended Tiers table — tightened columns */
+  .table-wrap {
+    overflow-x:auto;
+    margin:0 -14px; padding:0 14px;
+    -webkit-overflow-scrolling:touch;
+  }
+  table {
+    width:100%; border-collapse:separate; border-spacing:0;
+    font-size:12px; font-variant-numeric:tabular-nums;
+    table-layout:fixed;
+    min-width:560px;
+  }
+  thead th {
+    background:rgba(255,255,255,.55);
+    font-weight:600; color:var(--text); font-size:10px;
+    text-transform:uppercase; letter-spacing:.4px;
+    padding:8px 6px; text-align:right;
+    border-bottom:1px solid rgba(180,185,195,.4);
+    position:sticky; top:0;
+  }
+  thead th:first-child { text-align:left; padding-left:4px; }
+  tbody td {
+    padding:9px 6px; text-align:right;
+    border-bottom:1px solid rgba(180,185,195,.2);
+    color:var(--text);
+  }
+  tbody td:first-child { text-align:left; padding-left:4px; font-weight:500; color:var(--text-strong); }
+  tbody tr:last-child td { border-bottom:none; }
+  tr.recommended { background:rgba(0,174,239,.10); }
+  tr.recommended td { font-weight:700; color:var(--text-strong); }
+  tr.recommended td:first-child::before { content:"★ "; color:var(--blue); }
+
+  /* Column widths for tier table */
+  col.col-tier   { width:32%; }
+  col.col-num    { width:11.33%; }
+
+  .badge {
+    display:inline-block; padding:2px 7px; border-radius:4px;
+    font-size:10px; font-weight:700; letter-spacing:.4px;
+    background:rgba(180,185,195,.35); color:var(--text);
+  }
+  .footer-note {
+    font-size:10px; color:var(--silver);
+    text-align:center; padding:8px 14px 16px;
+  }
+  .neg { color:var(--red); }
+  .pos { color:var(--green); }
+
+  /* Hidden Pricing Output section (kept in DOM for calc, just not shown) */
+  #sec-output { display:none; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>West Series · Pricing Model</h1>
+  <div class="subtitle">V2.1 · MOBILE</div>
+</header>
+
+<main>
+
+  <section id="sec-prospect">
+    <h2>Prospect Inputs</h2>
+    <div class="body">
+      <div class="grid2">
+        <div class="row">
+          <label>Benefit Eligible HC</label>
+          <input type="number" id="hc" value="1201" min="1" step="1">
+        </div>
+        <div class="row">
+          <label>Annual Premium <span class="hint">optional</span></label>
+          <input type="number" id="premium" placeholder="benchmark if blank" step="1000">
+        </div>
+        <div class="row">
+          <label>Region / Market</label>
+          <select id="region"></select>
+        </div>
+        <div class="row">
+          <label>Client Status</label>
+          <select id="clientStatus">
+            <option selected>New Prospect</option>
+            <option>Current Client</option>
+          </select>
+        </div>
+        <div class="row">
+          <label>Situation</label>
+          <select id="situation">
+            <option value="Normal">Normal</option>
+            <option value="Competitive" selected>Competitive</option>
+          </select>
+        </div>
+        <div class="row">
+          <label>IAS Service Fee %</label>
+          <input type="number" id="iasFee" value="5" min="0" max="100" step="0.5">
+        </div>
+        <div class="row">
+          <label>Stop Loss Service Fee %</label>
+          <input type="number" id="slFee" value="5" min="0" max="100" step="0.5">
+        </div>
+      </div>
+      <!-- Hidden: Selected Tier (always auto) and Competitive Analysis (removed) -->
+      <select id="selectedTier" style="display:none"><option value="auto" selected>auto</option></select>
+    </div>
+  </section>
+
+  <section id="sec-team">
+    <h2>Service Team Inputs</h2>
+    <div class="body">
+      <div class="grid2">
+        <div class="row">
+          <label>Service Region <span class="hint">team location</span></label>
+          <select id="svcRegion"></select>
+        </div>
+        <div class="row">
+          <label>Team Size</label>
+          <select id="teamSize">
+            <option value="2" selected>2 people</option>
+            <option value="3">3 people</option>
+          </select>
+        </div>
+        <div class="row">
+          <label>Payroll Scenario</label>
+          <select id="payScenario">
+            <option value="Low">Low</option>
+            <option value="Mid" selected>Mid</option>
+            <option value="High">High</option>
+          </select>
+        </div>
+        <div class="row">
+          <label>Client/Time Allocation</label>
+          <input type="number" id="timeAlloc" value="10" min="1" max="100" step="1">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="sec-tiers">
+    <h2>Recommended Tiers</h2>
+    <div class="body">
+      <div class="table-wrap">
+        <table id="tier-table">
+          <colgroup>
+            <col class="col-tier">
+            <col class="col-num">
+            <col class="col-num">
+            <col class="col-num">
+            <col class="col-num">
+            <col class="col-num">
+            <col class="col-num">
+          </colgroup>
+          <thead><tr>
+            <th>Tier</th>
+            <th>Target Comp</th>
+            <th>Cost</th>
+            <th>Profit</th>
+            <th>Margin</th>
+            <th>PEPM</th>
+            <th>Comm %</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="output-row headline" style="margin-top:10px">
+        <span class="lbl">Blended Recommended Comp</span>
+        <span class="val" id="blendedComp">—</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hidden via CSS; kept for calc engine -->
+  <section id="sec-output">
+    <h2>Pricing Output</h2>
+    <div class="body" id="output-body"></div>
+  </section>
+
+  <section id="sec-fees">
+    <h2>Estimated Service Fees</h2>
+    <div class="body">
+      <div class="output-row"><span class="lbl">Integrated Absence Solutions <span class="hint">(Mid)</span></span><span class="val" id="ias-mid">—</span></div>
+      <div class="output-row"><span class="lbl">Stop Loss <span class="hint">(Mid)</span></span><span class="val" id="sl-mid">—</span></div>
+      <div class="output-row headline" style="margin-top:6px">
+        <span class="lbl">Target Comp Net of Fees</span>
+        <span class="val" id="netComp">—</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer-note">
+    West Series Pricing Model V2.1 · Snapshot 2026-05-21
+  </div>
+
+</main>
+
+<script>
+/* ===================================================================
+   DATA TABLES — refresh from workbook if upstream data changes
+   =================================================================== */
+
+const BANDS = [
+  {lo:1,    up:100,   mid:51,    p25:32.56, p35:35.48, p40:36.94, p50:39.86, p60:47.57, p75:59.13, c25:.0334, c35:.0368, c40:.0385, c50:.0420, c60:.0442, c75:.0474, pepy:12215},
+  {lo:101,  up:200,   mid:151,   p25:20.81, p35:25.21, p40:27.75, p50:32.37, p60:36.52, p75:44.22, c25:.0291, c35:.0353, c40:.0382, c50:.0436, c60:.0485, c75:.0552, pepy:9615},
+  {lo:201,  up:300,   mid:251,   p25:17.67, p35:21.93, p40:24.03, p50:28.18, p60:32.72, p75:41.70, c25:.0270, c35:.0328, c40:.0355, c50:.0412, c60:.0460, c75:.0545, pepy:8921},
+  {lo:301,  up:400,   mid:351,   p25:16.10, p35:19.74, p40:21.52, p50:25.47, p60:30.28, p75:38.38, c25:.0258, c35:.0312, c40:.0338, c50:.0396, c60:.0447, c75:.0531, pepy:8657},
+  {lo:401,  up:500,   mid:451,   p25:14.34, p35:18.73, p40:20.71, p50:24.55, p60:28.98, p75:36.98, c25:.0232, c35:.0286, c40:.0319, c50:.0370, c60:.0428, c75:.0517, pepy:8574},
+  {lo:501,  up:750,   mid:626,   p25:11.69, p35:15.35, p40:17.14, p50:21.00, p60:25.42, p75:33.21, c25:.0185, c35:.0243, c40:.0272, c50:.0328, c60:.0384, c75:.0482, pepy:8565},
+  {lo:751,  up:1000,  mid:876,   p25: 9.51, p35:13.42, p40:15.72, p50:18.96, p60:22.75, p75:30.17, c25:.0167, c35:.0220, c40:.0250, c50:.0308, c60:.0356, c75:.0460, pepy:8237},
+  {lo:1001, up:1500,  mid:1251,  p25: 7.36, p35:10.22, p40:11.60, p50:14.57, p60:17.61, p75:23.83, c25:.0123, c35:.0173, c40:.0200, c50:.0261, c60:.0310, c75:.0399, pepy:8034},
+  {lo:1501, up:2000,  mid:1751,  p25: 5.66, p35: 8.08, p40: 9.66, p50:12.74, p60:16.35, p75:20.65, c25:.0101, c35:.0153, c40:.0187, c50:.0251, c60:.0302, c75:.0430, pepy:7155},
+  {lo:2001, up:3000,  mid:2501,  p25: 3.49, p35: 6.08, p40: 6.93, p50: 9.38, p60:12.63, p75:16.90, c25:.0070, c35:.0109, c40:.0138, c50:.0189, c60:.0233, c75:.0354, pepy:7238},
+  {lo:3001, up:5000,  mid:4001,  p25: 2.86, p35: 4.73, p40: 5.53, p50: 6.93, p60: 9.76, p75:14.84, c25:.0078, c35:.0121, c40:.0143, c50:.0180, c60:.0229, c75:.0332, pepy:5867},
+  {lo:5001, up:7500,  mid:6251,  p25: 1.76, p35: 3.92, p40: 4.51, p50: 5.52, p60: 7.65, p75:12.78, c25:.0091, c35:.0102, c40:.0120, c50:.0172, c60:.0264, c75:.0316, pepy:6553},
+  {lo:7501, up:10000, mid:8751,  p25: 1.54, p35: 2.87, p40: 2.97, p50: 4.57, p60: 9.90, p75:17.22, c25:.0074, c35:.0121, c40:.0146, c50:.0168, c60:.0274, c75:.0326, pepy:6287},
+  {lo:10001,up:999999,mid:30001, p25:  .52, p35: 1.03, p40: 2.07, p50: 3.15, p60: 4.56, p75: 7.35, c25:.0059, c35:.0067, c40:.0082, c50:.0125, c60:.0169, c75:.0314, pepy:4667}
+];
+
+const REGIONS = [
+  {name:"SoCal",     pepm:1.248, comm:1.253},
+  {name:"NoCal",     pepm:1.281, comm:1.187},
+  {name:"Seattle",   pepm:0.800, comm:0.856},
+  {name:"Denver",    pepm:0.933, comm:0.987},
+  {name:"Utah",      pepm:0.913, comm:1.082},
+  {name:"Phoenix",   pepm:0.963, comm:1.279},
+  {name:"Midwest",   pepm:0.843, comm:0.827},
+  {name:"Northeast", pepm:1.054, comm:0.858},
+  {name:"Southeast", pepm:0.948, comm:1.065},
+  {name:"South",     pepm:1.086, comm:1.208},
+  {name:"Other",     pepm:0.705, comm:1.067}
+];
+
+const SVC_PAYROLL = {
+  "Denver":              {svc1:62185, svc2: 99743, cl1:141281, cl2:232556},
+  "Northern California": {svc1:70424, svc2:124565, cl1:143917, cl2:248233},
+  "Phoenix":             {svc1:60109, svc2:107624, cl1:144821, cl2:225239},
+  "Seattle":             {svc1:72948, svc2:127049, cl1:180838, cl2:197704},
+  "Southern California": {svc1:71538, svc2:121309, cl1:177036, cl2:270289}
+};
+
+const FRINGE = 0.30;
+const LOADS_ON_COMP = {
+  bonus:       0.02,
+  specialty:   0.0662,
+  overhead:    0.10,
+  shareholder: 0.10,
+  sharedSvcs:  0.10,
+  costOfSales: 0.30
+};
+
+const SL_PEPM = [
+  {lo:0,    low:180, mid:230, high:290},
+  {lo:100,  low:130, mid:170, high:220},
+  {lo:250,  low: 95, mid:125, high:160},
+  {lo:500,  low: 70, mid: 95, high:125},
+  {lo:1000, low: 55, mid: 75, high:100},
+  {lo:2500, low: 35, mid: 50, high: 70},
+  {lo:5000, low: 22, mid: 32, high: 45}
+];
+const IAS_PEPM = [
+  {lo:0,    low:55, mid:80, high:115},
+  {lo:100,  low:52, mid:75, high:105},
+  {lo:250,  low:48, mid:68, high: 95},
+  {lo:500,  low:45, mid:63, high: 88},
+  {lo:1000, low:42, mid:58, high: 80},
+  {lo:2500, low:38, mid:53, high: 72},
+  {lo:5000, low:35, mid:48, high: 65}
+];
+
+// Auto tier rule — Situation simplified to Normal | Competitive
+//   Normal maps to "Standard"; Competitive maps to "Competitive"
+const TIER_RULES = {
+  "New Prospect|Normal":         "P50",
+  "New Prospect|Competitive":    "P40",
+  "Current Client|Normal":       "P60",
+  "Current Client|Competitive":  "P60"
+};
+
+const TIER_DEF = [
+  {key:"P35", label:"Low (P35)"},
+  {key:"P40", label:"Mid-Low (P40)"},
+  {key:"P50", label:"Mid (P50)"},
+  {key:"P60", label:"High (P60)"}
+];
+
+/* Dropdowns */
+const regionSel = document.getElementById("region");
+REGIONS.forEach(r => regionSel.insertAdjacentHTML("beforeend",
+  `<option ${r.name==="NoCal"?"selected":""}>${r.name}</option>`));
+const svcRegSel = document.getElementById("svcRegion");
+Object.keys(SVC_PAYROLL).forEach(r => svcRegSel.insertAdjacentHTML("beforeend",
+  `<option ${r==="Southern California"?"selected":""}>${r}</option>`));
+
+/* Helpers */
+const fmtUSD  = n => isFinite(n) ? (n<0?"-$":"$") + Math.abs(Math.round(n)).toLocaleString("en-US") : "—";
+const fmtUSD2 = n => isFinite(n) ? "$" + n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}) : "—";
+const fmtPct  = n => isFinite(n) ? (n*100).toFixed(2)+"%" : "—";
+const fmtPct1 = n => isFinite(n) ? (n*100).toFixed(1)+"%" : "—";
+const $ = id => document.getElementById(id);
+
+function bandIdx(hc) {
+  const i = BANDS.findIndex(b => hc >= b.lo && hc <= b.up);
+  return i === -1 ? BANDS.length - 1 : i;
+}
+function interpolate(hc, idx, field) {
+  const b = BANDS[idx];
+  if (!b) return NaN;
+  let nIdx;
+  if (hc < b.mid && idx > 0) nIdx = idx - 1;
+  else if (hc > b.mid && idx < BANDS.length-1) nIdx = idx + 1;
+  else return b[field];
+  const n = BANDS[nIdx];
+  const t = (hc - b.mid) / (n.mid - b.mid);
+  return b[field] + (n[field] - b[field]) * t;
+}
+
+/* Main calculation */
+function calc() {
+  const hc             = +$("hc").value || 0;
+  const premiumOverride= +$("premium").value || 0;
+  const regionName     = $("region").value;
+  const region         = REGIONS.find(r => r.name===regionName);
+  const clientStatus   = $("clientStatus").value;
+  const situation      = $("situation").value;
+  const iasFeePct      = (+$("iasFee").value || 0) / 100;
+  const slFeePct       = (+$("slFee").value  || 0) / 100;
+  const svcRegion      = $("svcRegion").value;
+  const teamSize       = +$("teamSize").value;
+  const scenario       = $("payScenario").value;
+  const timeAlloc      = (+$("timeAlloc").value || 0) / 100;
+
+  if (hc <= 0) return;
+
+  const selTier = TIER_RULES[clientStatus+"|"+situation] || "P50";
+  const idx = bandIdx(hc);
+  const band = BANDS[idx];
+
+  const pct  = {P35:"p35", P40:"p40", P50:"p50", P60:"p60"};
+  const cpct = {P35:"c35", P40:"c40", P50:"c50", P60:"c60"};
+  const pepmAt = k => interpolate(hc, idx, pct[k])  * region.pepm;
+  const commAt = k => interpolate(hc, idx, cpct[k]) * region.comm;
+  const premium = premiumOverride > 0 ? premiumOverride : hc * band.pepy;
+
+  function compForTier(k) {
+    const pepm = pepmAt(k), comm = commAt(k);
+    const pepmComp = pepm * hc * 12;
+    const pctComp  = comm * premium;
+    return { pepm, comm, pepmComp, pctComp, blended: (pepmComp + pctComp) / 2 };
+  }
+
+  // Team payroll — workbook-exact (rows C57/C58/C59 logic)
+  function teamPayrollLoaded() {
+    const pay = SVC_PAYROLL[svcRegion];
+    let svcP1;
+    if (teamSize === 2) {
+      if (scenario === "Low")       svcP1 = pay.svc1;
+      else if (scenario === "High") svcP1 = pay.svc2;
+      else                          svcP1 = (pay.svc1 + pay.svc2) / 2;
+    } else {
+      svcP1 = pay.svc1;
+    }
+    const svcP2 = (teamSize === 3) ? pay.svc2 : 0;
+    let cl;
+    if (scenario === "Low")       cl = pay.cl1;
+    else if (scenario === "High") cl = pay.cl2;
+    else                          cl = (pay.cl1 + pay.cl2) / 2;
+    return (svcP1 + svcP2 + cl) * timeAlloc * (1 + FRINGE);
+  }
+  const loadedPay = teamPayrollLoaded();
+  const loadSum = LOADS_ON_COMP.bonus + LOADS_ON_COMP.specialty +
+                  LOADS_ON_COMP.overhead + LOADS_ON_COMP.shareholder +
+                  LOADS_ON_COMP.sharedSvcs + LOADS_ON_COMP.costOfSales;
+  const costToService = comp => loadedPay + comp * loadSum;
+
+  const tiers = TIER_DEF.map(t => {
+    const c = compForTier(t.key);
+    const comp = c.blended;
+    const cost = costToService(comp);
+    const profit = comp - cost;
+    const margin = profit / comp;
+    return { ...t, ...c, comp, cost, profit, margin };
+  });
+
+  $("tier-table").querySelector("tbody").innerHTML = tiers.map(t => `
+    <tr class="${t.key===selTier?"recommended":""}">
+      <td>${t.label}</td>
+      <td>${fmtUSD(t.comp)}</td>
+      <td>${fmtUSD(t.cost)}</td>
+      <td class="${t.profit<0?"neg":"pos"}">${fmtUSD(t.profit)}</td>
+      <td class="${t.margin<0?"neg":""}">${fmtPct1(t.margin)}</td>
+      <td>${fmtUSD2(t.pepm)}</td>
+      <td>${fmtPct(t.comm)}</td>
+    </tr>
+  `).join("");
+
+  const selT = tiers.find(t=>t.key===selTier);
+  $("blendedComp").textContent = fmtUSD(selT.comp);
+
+  // Service fees — Mid only
+  const slRow  = [...SL_PEPM].reverse().find(r => hc >= r.lo) || SL_PEPM[0];
+  const iasRow = [...IAS_PEPM].reverse().find(r => hc >= r.lo) || IAS_PEPM[0];
+  const slFeeMid  = slRow.mid  * hc * 12 * slFeePct;
+  const iasFeeMid = iasRow.mid * hc * 12 * iasFeePct;
+  const iasCap = 300000;
+  const iasFeeMidCapped = Math.min(iasFeeMid, iasCap);
+
+  $("ias-mid").textContent  = fmtUSD(iasFeeMidCapped);
+  $("sl-mid").textContent   = fmtUSD(slFeeMid);
+  $("netComp").textContent  = fmtUSD(selT.comp - iasFeeMidCapped - slFeeMid);
+}
+
+/* Wire up */
+document.querySelectorAll("input,select").forEach(el => {
+  el.addEventListener("input", calc);
+  el.addEventListener("change", calc);
+});
+document.querySelectorAll("section > h2").forEach(h => {
+  h.addEventListener("click", () => h.parentElement.classList.toggle("collapsed"));
+});
+
+calc();
+</script>
+
+</body>
+</html>
