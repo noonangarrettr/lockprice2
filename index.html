@@ -16,7 +16,7 @@
   :root {
     --jet:#363636;
     --text:#1D1D1F;
-    --text-strong:#000000;
+    --text-strong:#333333;
     --silver:#6E6E73;
     --silver-light:#c8ccd4;
     --blue:#00AEEF;
@@ -93,7 +93,7 @@
   }
   input[type=number], input[type=text], select {
     width:100%; padding:8px 11px;
-    font-size:15px; color:var(--text-strong);
+    font-size:14px; color:var(--text-strong);
     border:1px solid var(--field-border); border-radius:8px;
     background:var(--field-bg);
     -webkit-appearance:none; appearance:none;
@@ -111,6 +111,16 @@
   }
   .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:8px 10px; }
   .span-full { grid-column: 1 / -1; }
+  .input-wrap { position:relative; }
+  .input-wrap input { padding-right:30px; }
+  .clear-btn {
+    position:absolute; right:8px; top:50%; transform:translateY(-50%);
+    background:none; border:none; padding:0; margin:0; cursor:pointer;
+    color:var(--silver); font-size:15px; line-height:1;
+    width:20px; height:20px; display:flex; align-items:center; justify-content:center;
+    border-radius:50%;
+  }
+  .clear-btn:hover { background:rgba(0,0,0,.07); color:var(--text); }
 
   /* Output rows */
   .output-row {
@@ -195,7 +205,10 @@
       <div class="grid2">
         <div class="row span-full">
           <label>Benefit Eligible HC</label>
-          <input type="number" id="hc" value="1201" min="1" step="1">
+          <div class="input-wrap">
+            <input type="number" id="hc" placeholder="Enter headcount" min="1" step="1">
+            <button class="clear-btn" id="hc-clear" type="button" style="display:none" aria-label="Clear">×</button>
+          </div>
         </div>
         <div class="row">
           <label>Annual Premium <span class="hint">optional</span></label>
@@ -450,7 +463,11 @@ function calc() {
   const scenario       = $("payScenario").value;
   const timeAlloc      = (+$("timeAlloc").value || 0) / 100;
 
-  if (hc <= 0) return;
+  if (hc <= 0) {
+    $("tier-table").querySelector("tbody").innerHTML = "";
+    ["blendedComp","ias-mid","sl-mid","netComp"].forEach(id => $(id).textContent = "—");
+    return;
+  }
 
   const selTier = TIER_RULES[clientStatus+"|"+situation] || "P50";
   const idx = bandIdx(hc);
@@ -531,6 +548,15 @@ function calc() {
 document.querySelectorAll("input,select").forEach(el => {
   el.addEventListener("input", calc);
   el.addEventListener("change", calc);
+});
+$("hc").addEventListener("input", function() {
+  $("hc-clear").style.display = this.value ? "flex" : "none";
+});
+$("hc-clear").addEventListener("click", function() {
+  $("hc").value = "";
+  this.style.display = "none";
+  $("hc").focus();
+  calc();
 });
 document.querySelectorAll("section > h2").forEach(h => {
   h.addEventListener("click", () => h.parentElement.classList.toggle("collapsed"));
