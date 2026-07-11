@@ -3,11 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Pricing Model">
 <meta name="theme-color" content="#1a1d24">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%23000'/%3E%3Ctext x='90' y='115' font-family='Arial' font-size='80' font-weight='bold' fill='%2300AEEF' text-anchor='middle'%3EL%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%23000'/%3E%3Ctext x='90' y='115' font-family='Arial' font-size='80' font-weight='bold' fill='%2300AEEF' text-anchor='middle'%3EL%3C/text%3E%3C/svg%3E">
 <title>West Series · Pricing Model V2.1</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -66,17 +68,21 @@
     box-shadow:var(--card-shadow);
     overflow:hidden;
   }
-  section > h2 {
-    margin:0; padding:10px 14px;
+  section > h2 { margin:0; }
+  .sec-toggle {
+    width:100%; margin:0; padding:10px 14px;
+    font-family:inherit; text-align:left;
     font-size:12px; font-weight:700; letter-spacing:.9px; text-transform:uppercase;
     color:var(--text-strong);
     background:rgba(0,0,0,.025);
+    border:none;
     border-bottom:1px solid var(--card-border);
     display:flex; align-items:center; justify-content:space-between;
     cursor:pointer; user-select:none;
   }
-  section > h2::after { content:"−"; font-size:16px; font-weight:400; color:var(--blue); }
-  section.collapsed > h2::after { content:"+"; }
+  .sec-toggle:focus-visible { outline:2px solid var(--blue); outline-offset:-2px; }
+  .sec-toggle::after { content:"−"; font-size:16px; font-weight:400; color:var(--blue); }
+  section.collapsed .sec-toggle::after { content:"+"; }
   section.collapsed > .body { display:none; }
   .body { padding:10px 14px 12px; }
 
@@ -156,7 +162,6 @@
     text-transform:uppercase; letter-spacing:.4px;
     padding:8px 6px; text-align:right;
     border-bottom:1px solid var(--card-border);
-    position:sticky; top:0;
   }
   thead th:first-child { text-align:left; padding-left:4px; }
   tbody td {
@@ -186,9 +191,6 @@
   }
   .neg { color:var(--red); }
   .pos { color:var(--green); }
-
-  /* Hidden Pricing Output section (kept in DOM for calc, just not shown) */
-  #sec-output { display:none; }
 </style>
 </head>
 <body>
@@ -200,70 +202,70 @@
 
 <main>
 
+  <noscript><div class="footer-note">This calculator requires JavaScript to run.</div></noscript>
+
   <section id="sec-prospect">
-    <h2>Prospect Inputs</h2>
-    <div class="body">
+    <h2><button type="button" class="sec-toggle" aria-expanded="true" aria-controls="body-prospect">Prospect Inputs</button></h2>
+    <div class="body" id="body-prospect">
       <div class="grid2">
         <div class="row span-full">
-          <label>Benefit Eligible HC</label>
+          <label for="hc">Benefit Eligible HC</label>
           <div class="input-wrap">
             <input type="number" id="hc" placeholder="Enter headcount" min="1" step="1">
             <button class="clear-btn" id="hc-clear" type="button" style="display:none" aria-label="Clear">×</button>
           </div>
         </div>
         <div class="row">
-          <label>Annual Premium <span class="hint">optional</span></label>
-          <input type="number" id="premium" placeholder="benchmark if blank" step="1000">
+          <label for="premium">Annual Premium <span class="hint">optional</span></label>
+          <input type="number" id="premium" placeholder="benchmark if blank" min="0" step="1000">
         </div>
         <div class="row">
-          <label>Region / Market</label>
+          <label for="region">Region / Market</label>
           <select id="region"></select>
         </div>
         <div class="row" style="display:none">
-          <label>Client Status</label>
+          <label for="clientStatus">Client Status</label>
           <select id="clientStatus">
             <option selected>New Prospect</option>
             <option>Current Client</option>
           </select>
         </div>
         <div class="row" style="display:none">
-          <label>Situation</label>
+          <label for="situation">Situation</label>
           <select id="situation">
             <option value="Normal">Normal</option>
             <option value="Competitive" selected>Competitive</option>
           </select>
         </div>
         <div class="row">
-          <label>IAS Service Fee %</label>
+          <label for="iasFee">IAS Service Fee %</label>
           <input type="number" id="iasFee" value="5" min="0" max="100" step="0.5">
         </div>
         <div class="row">
-          <label>Stop Loss Service Fee %</label>
+          <label for="slFee">Stop Loss Service Fee %</label>
           <input type="number" id="slFee" value="5" min="0" max="100" step="0.5">
         </div>
       </div>
-      <!-- Hidden: Selected Tier (always auto) and Competitive Analysis (removed) -->
-      <select id="selectedTier" style="display:none"><option value="auto" selected>auto</option></select>
     </div>
   </section>
 
   <section id="sec-team">
-    <h2>Service Team Inputs</h2>
-    <div class="body">
+    <h2><button type="button" class="sec-toggle" aria-expanded="true" aria-controls="body-team">Service Team Inputs</button></h2>
+    <div class="body" id="body-team">
       <div class="grid2">
         <div class="row">
-          <label>Service Region</label>
+          <label for="svcRegion">Service Region</label>
           <select id="svcRegion"></select>
         </div>
         <div class="row">
-          <label>Team Size</label>
+          <label for="teamSize">Team Size</label>
           <select id="teamSize">
             <option value="2" selected>2 people</option>
             <option value="3">3 people</option>
           </select>
         </div>
         <div class="row">
-          <label>Payroll Scenario</label>
+          <label for="payScenario">Payroll Scenario</label>
           <select id="payScenario">
             <option value="Low">Low</option>
             <option value="Mid" selected>Mid</option>
@@ -271,7 +273,7 @@
           </select>
         </div>
         <div class="row">
-          <label>Client/Time Allocation</label>
+          <label for="timeAlloc">Client/Time Allocation</label>
           <input type="number" id="timeAlloc" value="10" min="1" max="100" step="1">
         </div>
       </div>
@@ -279,8 +281,8 @@
   </section>
 
   <section id="sec-tiers">
-    <h2>Recommended Tiers</h2>
-    <div class="body">
+    <h2><button type="button" class="sec-toggle" aria-expanded="true" aria-controls="body-tiers">Recommended Tiers</button></h2>
+    <div class="body" id="body-tiers">
       <div class="table-wrap">
         <table id="tier-table">
           <colgroup>
@@ -305,15 +307,9 @@
     </div>
   </section>
 
-  <!-- Hidden via CSS; kept for calc engine -->
-  <section id="sec-output">
-    <h2>Pricing Output</h2>
-    <div class="body" id="output-body"></div>
-  </section>
-
   <section id="sec-fees">
-    <h2>Estimated Service Fees</h2>
-    <div class="body">
+    <h2><button type="button" class="sec-toggle" aria-expanded="true" aria-controls="body-fees">Estimated Service Fees</button></h2>
+    <div class="body" id="body-fees">
       <div class="output-row"><span class="lbl">Integrated Absence Solutions <span class="hint">(Mid)</span></span><span class="val" id="ias-mid">—</span></div>
       <div class="output-row"><span class="lbl">Stop Loss <span class="hint">(Mid)</span></span><span class="val" id="sl-mid">—</span></div>
       <div class="output-row headline" style="margin-top:6px">
@@ -427,15 +423,15 @@ Object.keys(SVC_PAYROLL).forEach(r => svcRegSel.insertAdjacentHTML("beforeend",
   `<option ${r==="Southern California"?"selected":""}>${r}</option>`));
 
 /* Helpers */
-const fmtUSD  = n => isFinite(n) ? (n<0?"-$":"$") + Math.abs(Math.round(n)).toLocaleString("en-US") : "—";
-const fmtUSD2 = n => isFinite(n) ? "$" + n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}) : "—";
-const fmtPct  = n => isFinite(n) ? (n*100).toFixed(2)+"%" : "—";
-const fmtPct1 = n => isFinite(n) ? (n*100).toFixed(1)+"%" : "—";
+const fmtUSD = n => isFinite(n) ? (n<0?"-$":"$") + Math.abs(Math.round(n)).toLocaleString("en-US") : "—";
+const clamp  = (n, lo, hi) => Math.min(hi, Math.max(lo, n));
 const $ = id => document.getElementById(id);
 
+// Last band whose lower bound the headcount reaches — no gaps possible
 function bandIdx(hc) {
-  const i = BANDS.findIndex(b => hc >= b.lo && hc <= b.up);
-  return i === -1 ? BANDS.length - 1 : i;
+  let i = BANDS.length - 1;
+  while (i > 0 && hc < BANDS[i].lo) i--;
+  return i;
 }
 function interpolate(hc, idx, field) {
   const b = BANDS[idx];
@@ -451,18 +447,18 @@ function interpolate(hc, idx, field) {
 
 /* Main calculation */
 function calc() {
-  const hc             = +$("hc").value || 0;
-  const premiumOverride= +$("premium").value || 0;
+  const hc             = Math.floor(+$("hc").value) || 0;
+  const premiumOverride= Math.max(0, +$("premium").value || 0);
   const regionName     = $("region").value;
   const region         = REGIONS.find(r => r.name===regionName);
   const clientStatus   = $("clientStatus").value;
   const situation      = $("situation").value;
-  const iasFeePct      = (+$("iasFee").value || 0) / 100;
-  const slFeePct       = (+$("slFee").value  || 0) / 100;
+  const iasFeePct      = clamp(+$("iasFee").value || 0, 0, 100) / 100;
+  const slFeePct       = clamp(+$("slFee").value  || 0, 0, 100) / 100;
   const svcRegion      = $("svcRegion").value;
   const teamSize       = +$("teamSize").value;
   const scenario       = $("payScenario").value;
-  const timeAlloc      = (+$("timeAlloc").value || 0) / 100;
+  const timeAlloc      = clamp(+$("timeAlloc").value || 0, 1, 100) / 100;
 
   if (hc <= 0) {
     $("tier-table").querySelector("tbody").innerHTML = "";
@@ -516,8 +512,7 @@ function calc() {
     const comp = c.blended;
     const cost = costToService(comp);
     const profit = comp - cost;
-    const margin = profit / comp;
-    return { ...t, ...c, comp, cost, profit, margin };
+    return { ...t, ...c, comp, cost, profit };
   });
 
   $("tier-table").querySelector("tbody").innerHTML = tiers.map(t => `
@@ -545,24 +540,47 @@ function calc() {
   $("netComp").textContent  = fmtUSD(selT.comp - iasFeeMidCapped - slFeeMid);
 }
 
+/* Persistence — restore inputs across launches */
+const STORE_KEY = "westPricingV21";
+const SAVED_FIELDS = ["hc","premium","region","iasFee","slFee","svcRegion","teamSize","payScenario","timeAlloc"];
+function saveState() {
+  try {
+    const state = {};
+    SAVED_FIELDS.forEach(id => state[id] = $(id).value);
+    localStorage.setItem(STORE_KEY, JSON.stringify(state));
+  } catch (e) { /* private mode / storage full — live without persistence */ }
+}
+function restoreState() {
+  try {
+    const state = JSON.parse(localStorage.getItem(STORE_KEY) || "{}");
+    SAVED_FIELDS.forEach(id => { if (state[id] != null) $(id).value = state[id]; });
+  } catch (e) { /* corrupt or unavailable storage — start fresh */ }
+}
+
 /* Wire up */
-document.querySelectorAll("input,select").forEach(el => {
-  el.addEventListener("input", calc);
-  el.addEventListener("change", calc);
-});
-$("hc").addEventListener("input", function() {
-  $("hc-clear").style.display = this.value ? "flex" : "none";
-});
+function onFieldChange() { saveState(); calc(); }
+document.querySelectorAll("input").forEach(el => el.addEventListener("input", onFieldChange));
+document.querySelectorAll("select").forEach(el => el.addEventListener("change", onFieldChange));
+
+function syncClearBtn() {
+  $("hc-clear").style.display = $("hc").value ? "flex" : "none";
+}
+$("hc").addEventListener("input", syncClearBtn);
 $("hc-clear").addEventListener("click", function() {
   $("hc").value = "";
   this.style.display = "none";
   $("hc").focus();
-  calc();
+  onFieldChange();
 });
-document.querySelectorAll("section > h2").forEach(h => {
-  h.addEventListener("click", () => h.parentElement.classList.toggle("collapsed"));
+document.querySelectorAll(".sec-toggle").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const collapsed = btn.closest("section").classList.toggle("collapsed");
+    btn.setAttribute("aria-expanded", String(!collapsed));
+  });
 });
 
+restoreState();
+syncClearBtn();
 calc();
 </script>
 
